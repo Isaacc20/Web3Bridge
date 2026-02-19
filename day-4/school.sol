@@ -60,8 +60,8 @@ contract DevSchool {
 
     function registerStudent(address _address, string memory _fullName, uint16 _age, uint16 _level) external payable onlyAdmin {
         require(_address != address(0), "Account zero detected");
+        require(_address != students[_address].account, "Student already exists");
         require(msg.value > 0, "Cannot send 0 ETH");
-        
         require(msg.value == level[students[_address].level], "Incorrect amount");
 
         schBalance = schBalance + msg.value;
@@ -122,14 +122,13 @@ contract DevSchool {
         } else if (student.level == 300) {
             student.level = 400;
         } else if (student.level == 400) {
-            student.level = 401;
             student.status = Status.Graduate;
         }
     }
 
     function registerStaff(address _address, string memory _fullName, uint16 _age) external onlyAdmin {
         require(_address != address(0), "Account zero detected");
-        require(students[_address].status == Status.Graduate || students[_address].level == 401, "Student cannot be a staff");
+        require(_address != staffs[_address].account, "Staff already exists");
 
         staffs[_address] = Staff(_address, _fullName, _age);
         staffList.push(_address);
